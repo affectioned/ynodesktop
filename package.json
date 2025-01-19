@@ -17,8 +17,8 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.15.0",
-    "electron": "^29.1.4",
-    "electron-builder": "^24.13.3",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
