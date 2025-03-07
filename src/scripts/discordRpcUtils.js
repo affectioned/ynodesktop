@@ -80,7 +80,7 @@ async function fetchLocationText(webContents) {
             const locationUrl = locationElement.href || null;
             resolve({ locationText, locationUrl });
           } else {
-            resolve({null, null});
+            resolve({ locationText: null, locationUrl: null }); // ✅ Proper null values
             setTimeout(checkElement, 500); // Retry every 500ms
           }
         };
@@ -90,7 +90,8 @@ async function fetchLocationText(webContents) {
 
     return location;
   } catch (error) {
-    return null;
+    console.error("Error fetching location text:", error);
+    return { locationText: null, locationUrl: null }; // Return a consistent object structure
   }
 }
 
