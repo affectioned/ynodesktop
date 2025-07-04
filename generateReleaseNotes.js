@@ -1,8 +1,8 @@
 const { exec } = require("child_process");
 const fs = require("fs");
 
-const oldVersion = "1.2.2";
-const newVersion = "1.2.3";
+const oldVersion = "1.2.3";
+const newVersion = "1.2.4";
 
 exec(`git log ${oldVersion}..${newVersion} --oneline`, (error, stdout) => {
     const formattedOutput = stdout
