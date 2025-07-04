@@ -124,7 +124,7 @@ const createWindow = () => {
   mainWindow.setMenu(null);
   mainWindow.setTitle("Yume Nikki Online Project");
 
-  mainWindow.webContents.setMaxListeners(12);
+  mainWindow.webContents.setMaxListeners(13);
 
   mainWindow.on("closed", () => {
     saveSession();
@@ -175,32 +175,32 @@ let isMax = false;
 app.whenReady().then(async () => {
   // Example: Setting a cookie if it exists in the store
   if (store.has("ynoproject_sessionId")) {
-      session.defaultSession.cookies.set({
-          url: "https://ynoproject.net",
-          name: "ynoproject_sessionId",
-          value: store.get("ynoproject_sessionId"),
-          sameSite: "strict",
-      });
+    session.defaultSession.cookies.set({
+      url: "https://ynoproject.net",
+      name: "ynoproject_sessionId",
+      value: store.get("ynoproject_sessionId"),
+      sameSite: "strict",
+    });
   }
 
   // IPC Handlers for minimize and maximize
   ipcMain.on("minimize", () => {
-      const focusedWindow = BrowserWindow.getFocusedWindow();
-      if (focusedWindow) {
-          focusedWindow.minimize();
-      }
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      focusedWindow.minimize();
+    }
   });
 
   ipcMain.on("maximize", () => {
-      const focusedWindow = BrowserWindow.getFocusedWindow();
-      if (focusedWindow) {
-          if (isMax) {
-              focusedWindow.unmaximize();
-          } else {
-              focusedWindow.maximize();
-          }
-          isMax = !isMax;
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      if (isMax) {
+        focusedWindow.unmaximize();
+      } else {
+        focusedWindow.maximize();
       }
+      isMax = !isMax;
+    }
   });
 
   // Create the main application window
@@ -210,15 +210,16 @@ app.whenReady().then(async () => {
 
   // Initialize Discord RPC
   try {
-      await connectDiscordRpc(); // Connect the Discord RPC client
+    await connectDiscordRpc(); // Connect the Discord RPC client
 
-      // Start updating the rich presence with the current URL every 1500ms
-      setInterval(() => {
-          const currentURL = mainWindow.webContents.getURL(); // Get the current URL
-          updateRichPresence(mainWindow.webContents, currentURL); // Pass the URL to the update function
-      }, 1500);
+    // Start updating the rich presence with the current URL every 1500ms
+    setInterval(() => {
+      const currentURL = mainWindow.webContents.getURL();
+      updateRichPresence(mainWindow.webContents, currentURL).catch(console.error);
+    }, 1500);
+
   } catch (error) {
-      console.error("Failed to connect Discord RPC:", error);
+    console.error("Failed to connect Discord RPC:", error);
   }
 });
 

@@ -7,60 +7,48 @@ const client = new Client({
 });
 
 async function updateRichPresence(webContents, currentURL) {
-  let gameName = parseGameName(currentURL);
+  if (!client) {
+    console.warn('Discord RPC is not ready - skipping setActivity');
+    return;
+  }
+
+  if (!client.user?.setActivity) {
+    console.warn('RPC not ready - skipping update');
+    return;
+  }
+
+  const gameName = parseGameName(currentURL);
   if (!gameName) {
-    try {
-      await client.user?.setActivity({
-        largeImageKey: "yno-logo",
-        largeImageText: "Yume Nikki Online Project",
-        state: "Choosing a door...",
-        instance: false,
-      });
-    } catch (error) {
-      console.error("Failed to update rich presence:", error);
-    }
-    return;
+    return setBasicPresence();
   }
 
-  let location = await fetchLocationText(webContents);
+  const location = await fetchLocationText(webContents);
+  const stateText = location?.locationText ?? 'Going to bed…';
 
-  if (!location || !location.locationText) {
-    try {
-      await client.user?.setActivity({
-        largeImageKey: `https://ynoproject.net/images/door_${gameName}.gif`,
-        largeImageText: gameName,
-        smallImageKey: "yno-logo",
-        smallImageText: "YNOProject",
-        details: `Dreaming on ${gameName}...`,
-        instance: false,
-        state: "Going to bed...",
-      });
-    } catch (error) {
-      console.error("Failed to update rich presence:", error);
-    }
-    return;
-  }
+  const activity = {
+    largeImageKey: `https://ynoproject.net/images/door_${gameName}.gif`,
+    largeImageText: gameName,
+    smallImageKey: 'yno-logo',
+    smallImageText: 'YNOProject',
+    details: `Dreaming on ${gameName}…`,
+    state: stateText,
+    instance: false
+  };
 
   try {
-    await client.user?.setActivity({
-      largeImageKey: `https://ynoproject.net/images/door_${gameName}.gif`,
-      largeImageText: gameName,
-      smallImageKey: "yno-logo",
-      smallImageText: "YNOProject",
-      details: `Dreaming on ${gameName}...`,
-      instance: false,
-      state: location.locationText,
-    });
-  } catch (error) {
-    console.error("Failed to update rich presence:", error);
+    await client.user.setActivity(activity);
+  } catch (err) {
+    console.error('Failed to update rich presence:', err);
   }
 }
 
 // Connect and start the Discord RPC client
 async function connectDiscordRpc() {
-  client.on("ready", () => {
-    console.log("Discord Rich Presence connected!");
-  });
+  if (!client.listenerCount("ready")) {
+    client.on("ready", () => {
+      console.log("Discord Rich Presence connected!");
+    });
+  }
 
   try {
     await client.login();
@@ -95,6 +83,20 @@ async function fetchLocationText(webContents) {
   }
 }
 
+async function setBasicPresence() {
+  const activity = {
+    largeImageKey: "yno-logo",
+    largeImageText: "Yume Nikki Online Project",
+    state: "Choosing a door...",
+    instance: false,
+  };
+
+  try {
+    await client.user.setActivity(activity);
+  } catch (err) {
+    console.error('Failed to update rich presence:', err);
+  }
+}
 
 // Export the functions and client
 module.exports = { updateRichPresence, connectDiscordRpc, client };
