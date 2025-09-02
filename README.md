@@ -82,11 +82,6 @@ This will create the distributable files in the `dist` directory.
 - `package.json`: Contains project metadata and dependencies.
 - `yarn.lock`: Dependency lock file to ensure consistent setups.
 
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ## YNOproject
 
 Click on the heading to check out the [Yume Nikki Online Project](https://github.com/ynoproject)!  
