@@ -82,9 +82,6 @@ This will create the distributable files in the `dist` directory.
 - `package.json`: Contains project metadata and dependencies.
 - `yarn.lock`: Dependency lock file to ensure consistent setups.
 
-## Contributing
-
-Feel free to fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
