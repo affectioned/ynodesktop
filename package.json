@@ -1,6 +1,6 @@
 {
   "name": "ynodesktop",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "A Yume Nikki Online desktop client with optional Discord Rich Presence",
   "main": "src/main.js",
   "scripts": {
