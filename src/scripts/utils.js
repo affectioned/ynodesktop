@@ -22,7 +22,6 @@ const isDreamWorldMap = (url) => {
   }
 };
 
-
 module.exports = {
   parseGameName,
   isDreamWorldMap,

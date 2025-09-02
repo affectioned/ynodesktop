@@ -120,19 +120,28 @@ const createWindow = () => {
     mainWindow.webContents.send("log-app-version", app.getVersion());
   });
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    const url = details.url.toLowerCase();
-    const gameName = parseGameName(url);
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    let u;
+    try { u = new URL(url); } catch { return { action: "deny" }; }
 
-    if (url.startsWith("https://yume.wiki") && !isDreamWorldMap(url)) {
-      shell.openExternal(details.url); // Open URL in user's browser.
-      return { action: "deny" }; // Prevent the app from opening the URL.
+    const isMap = isDreamWorldMap(u.toString());
+    const gameName = parseGameName(u.toString());
+    const isGame = typeof gameName === "string" && gameName.trim().length > 0;
+
+    // 1) If it’s a game link (not a map), load in-app
+    if (isGame && !isMap) {
+      mainWindow.loadURL(`https://ynoproject.net/${encodeURIComponent(gameName.trim())}`);
+      return { action: "deny" };
     }
-    else if(gameName && typeof gameName === 'string' && !isDreamWorldMap(url)){
-      mainWindow.loadURL(`https://ynoproject.net/${gameName}`) // Load a new game instead of spawning a new electron window
-      return { action: "deny" }; 
+
+    // 2) Map links open in new Electron window
+    if (isMap) return { action: "allow" };
+
+    // 3) Everything else → system browser
+    if (u.protocol === "https:") {
+      shell.openExternal(u.toString());
     }
-    return { action: "allow" };
+    return { action: "deny" };
   });
 
   mainWindow.webContents.on("did-start-loading", () => {
