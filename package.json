@@ -1,55 +1,35 @@
 {
   "name": "ynodesktop",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "A Yume Nikki Online desktop client with optional Discord Rich Presence",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "start-nodrpc": "electron src/main-nodrpc.js",
-    "dir": "electron-builder --dir",
     "dist": "electron-builder",
-    "dir-nodrpc": "electron-builder --dir",
-    "dist-nodrpc": "electron-builder -c.appId=ynodesktop-nodrpc -c.productName=YNOdesktop-NoDRPC",
-    "lint": "eslint .",
-    "release-notes": "node generateReleaseNotes.js"
+    "dist-nodrpc": "electron-builder -c.appId=ynodesktop-nodrpc -c.productName=YNOdesktop-NoDRPC"
   },
   "author": "jvbf, abbey, foundationkitty",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
     "electron": "^35.7.5",
-    "electron-builder": "^25.1.8",
-    "eslint": "^9.15.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.12.0"
+    "electron-builder": "^25.1.8"
   },
   "build": {
     "appId": "jvbf.ynodesktop",
     "productName": "YNOdesktop",
-    "dmg": {
-      "title": "${productName} ${version}"
-    },
     "linux": {
       "target": [
-        "AppImage",
-        "deb"
+        "portable"
       ],
       "category": "Game",
       "icon": "assets/logo.png"
     },
     "win": {
       "target": [
-        "portable",
-        "zip",
-        "nsis"
-      ]
-    },
-    "icon": "assets/logo.ico",
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "installerIcon": "assets/logo.ico"
+        "portable"
+      ],
+      "icon": "assets/logo.ico"
     }
   },
   "dependencies": {
