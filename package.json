@@ -7,7 +7,7 @@
     "start": "electron .",
     "start-nodrpc": "electron src/main-nodrpc.js",
     "dist": "electron-builder",
-    "dist-nodrpc": "electron-builder -c.appId=ynodesktop-nodrpc -c.productName=YNOdesktop-NoDRPC"
+    "dist-nodrpc": "electron-builder -c.appId=jvbf.ynodesktop-nodrpc -c.productName=YNOdesktop-NoDRPC"
   },
   "author": "jvbf, abbey, foundationkitty",
   "license": "MIT",
@@ -18,9 +18,10 @@
   "build": {
     "appId": "jvbf.ynodesktop",
     "productName": "YNOdesktop",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "linux": {
       "target": [
-        "portable"
+        "AppImage"
       ],
       "category": "Game",
       "icon": "assets/logo.png"
