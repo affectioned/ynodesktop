@@ -1,102 +1,89 @@
-const { Client } = require("@xhayper/discord-rpc");
-const { parseGameName } = require("./utils");
+const DiscordRPC = require('discord-rpc');
+const { parseGameName } = require('./utils');
 
-// Initialize the Discord RPC client
-const client = new Client({
-  clientId: "1311371561416265738",
-});
+const CLIENT_ID = '1311371561416265738';
+const DISCORD_STATE_MAX_LENGTH = 128; // Discord RPC state field limit
+const client = new DiscordRPC.Client({ transport: 'ipc' });
+let isReady = false;
+
+async function connectDiscordRpc() {
+  if (isReady) return;
+
+  client.removeAllListeners('disconnected');
+  client.on('disconnected', () => {
+    isReady = false;
+  });
+
+  await client.login({ clientId: CLIENT_ID });
+  isReady = true;
+  console.log('Discord Rich Presence connected!');
+}
 
 async function updateRichPresence(webContents, currentURL) {
-  if (!client) {
-    console.warn('Discord RPC is not ready - skipping setActivity');
-    return;
-  }
-
-  if (!client.user?.setActivity) {
-    console.warn('RPC not ready - skipping update');
-    return;
-  }
+  if (!isReady) return;
 
   const gameName = parseGameName(currentURL);
-  if (!gameName) {
-    return setBasicPresence();
-  }
+  if (!gameName) return setBasicPresence();
 
-  const location = await fetchLocationText(webContents);
-  const stateText = location?.locationText ?? 'Going to bed…';
+  const { locationText } = await fetchLocationText(webContents);
 
-  const activity = {
-    largeImageKey: `https://ynoproject.net/images/door_${gameName}.gif`,
-    largeImageText: gameName,
-    smallImageKey: 'yno-logo',
-    smallImageText: 'YNOProject',
-    details: `Dreaming on ${gameName}…`,
-    state: stateText,
-    instance: false
-  };
+  // Validate and truncate location text before sending to Discord API
+  const safeState = typeof locationText === 'string'
+    ? locationText.slice(0, DISCORD_STATE_MAX_LENGTH)
+    : 'Going to bed…';
 
   try {
-    await client.user.setActivity(activity);
+    await client.setActivity({
+      // encodeURIComponent prevents malformed URLs from gameName containing special chars
+      largeImageKey: `https://ynoproject.net/images/door_${encodeURIComponent(gameName)}.gif`,
+      largeImageText: gameName,
+      smallImageKey: 'yno-logo',
+      smallImageText: 'YNOProject',
+      details: `Dreaming on ${gameName}…`,
+      state: safeState,
+      instance: false,
+    });
   } catch (err) {
     console.error('Failed to update rich presence:', err);
   }
 }
 
-// Connect and start the Discord RPC client
-async function connectDiscordRpc() {
-  if (!client.listenerCount("ready")) {
-    client.on("ready", () => {
-      console.log("Discord Rich Presence connected!");
-    });
-  }
-
+async function setBasicPresence() {
+  if (!isReady) return;
   try {
-    await client.login();
-  } catch (error) {
-    console.error("Failed to connect Discord RPC:", error);
+    await client.setActivity({
+      largeImageKey: 'yno-logo',
+      largeImageText: 'Yume Nikki Online Project',
+      state: 'Choosing a door...',
+      instance: false,
+    });
+  } catch (err) {
+    console.error('Failed to set basic presence:', err);
+  }
+}
+
+async function clearPresence() {
+  if (!isReady) return;
+  try {
+    await client.clearActivity();
+  } catch (err) {
+    console.error('Failed to clear presence:', err);
   }
 }
 
 async function fetchLocationText(webContents) {
   try {
-    const location = await webContents.executeJavaScript(`
-      new Promise((resolve) => {
-        const checkElement = () => {
-          const locationElement = document.querySelector('#locationText a');
-          if (locationElement) {
-            const locationText = locationElement.innerText || null;
-            const locationUrl = locationElement.href || null;
-            resolve({ locationText, locationUrl });
-          } else {
-            resolve({ locationText: null, locationUrl: null }); // ✅ Proper null values
-            setTimeout(checkElement, 500); // Retry every 500ms
-          }
-        };
-        checkElement();
-      });
+    return await webContents.executeJavaScript(`
+      (() => {
+        const el = document.querySelector('#locationText a');
+        return el
+          ? { locationText: el.innerText || null, locationUrl: el.href || null }
+          : { locationText: null, locationUrl: null };
+      })()
     `);
-
-    return location;
-  } catch (error) {
-    console.error("Error fetching location text:", error);
-    return { locationText: null, locationUrl: null }; // Return a consistent object structure
+  } catch {
+    return { locationText: null, locationUrl: null };
   }
 }
 
-async function setBasicPresence() {
-  const activity = {
-    largeImageKey: "yno-logo",
-    largeImageText: "Yume Nikki Online Project",
-    state: "Choosing a door...",
-    instance: false,
-  };
-
-  try {
-    await client.user.setActivity(activity);
-  } catch (err) {
-    console.error('Failed to update rich presence:', err);
-  }
-}
-
-// Export the functions and client
-module.exports = { updateRichPresence, connectDiscordRpc, client };
+module.exports = { connectDiscordRpc, updateRichPresence, clearPresence };

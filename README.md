@@ -1,88 +1,110 @@
 
 ![ynodesk](https://user-images.githubusercontent.com/2998216/201456135-270da105-a4fa-4976-a69a-3a69e5d3fe59.png)
 
-A desktop client for [Yume Nikki Online](https://ynoproject.net/) with optional Discord Rich Presence. Show your friends what game you're playing and what room you're in. Also looks pretty cool as an installed program.
+A desktop client for [Yume Nikki Online](https://ynoproject.net/) with optional Discord Rich Presence. Show your friends what game you're playing and what room you're in.
 
-Created as a simple Electron wrapper around the website, with optional `discord-rpc` integration and some hacks to make save exporting/importing work.
+[![Build and Release](https://github.com/aguish/ynodesktop/actions/workflows/release.yml/badge.svg)](https://github.com/aguish/ynodesktop/actions/workflows/release.yml)
 
 ## Features
 
-- Optional Discord Rich Presence to display your game status and room information to friends on Discord.
-- Easy installation and setup.
-- Smooth integration with Yume Nikki Online.
+- **Discord Rich Presence** — toggle on/off with the Discord button in the title bar, no restart needed. Preference is saved between sessions.
+- **Cross-platform** — Windows, macOS (Intel & Apple Silicon), and Linux.
+- **Save slot dialog** — replaces the browser prompt with a proper slider UI when exporting/importing saves.
+- **Session persistence** — stays logged in between launches.
 
-## Rich Presence
+## Download
+
+[**→ Latest release**](https://github.com/aguish/ynodesktop/releases/latest)
+
+| Platform | File |
+|----------|------|
+| Windows | `YNOdesktop-*-win-*.exe` — portable, no install needed |
+| macOS (Intel) | `YNOdesktop-*-mac-x64.dmg` |
+| macOS (Apple Silicon) | `YNOdesktop-*-mac-arm64.dmg` |
+| Linux | `YNOdesktop-*-linux-*.AppImage` |
+
+### macOS note
+
+macOS will block the app on first launch because it is not notarized. To allow it:
+
+```sh
+xattr -cr /Applications/YNOdesktop.app
+```
+
+Or right-click the app → Open → Open.
+
+### Linux note
+
+Make the AppImage executable before running:
+
+```sh
+chmod +x YNOdesktop-*.AppImage
+./YNOdesktop-*.AppImage
+```
+
+## Discord Rich Presence
 
 ![Rich Presence Example 1](https://user-images.githubusercontent.com/2998216/201456282-6337d763-db5c-4fc2-b399-00b3513b1f7b.png)
 
 ![Rich Presence Example 2](https://user-images.githubusercontent.com/2998216/201456297-8cb36ebb-6400-4ae8-9804-ce51bcf3c1b5.png)
 
-## Download
-
-The releases are currently Windows-only.
-
-[Click here to go to the download page for the latest release.](https://github.com/aguish/ynodesktop/releases/latest)
+Click the Discord icon in the title bar to toggle Rich Presence on or off at any time.
 
 ## Development Setup
 
-To set up the project locally, you need to have [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/) installed. Then follow these steps:
-
-1. Clone the repository:
+Requires [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/).
 
 ```sh
 git clone https://github.com/aguish/ynodesktop.git
-
 cd ynodesktop
-```
-
-2. Install dependencies:
-
-```sh
 yarn install
-```
-
-3. Run the application:
-
-To run the application, use the following command:
-
-```sh
 yarn start
 ```
 
-If you prefer to run the application without Discord RPC, use the following command:
+## Building
 
-```sh
-yarn start-nodrpc
-```
-
-## Building the Project
-
-To build the project, use the following command:
+Build for the current platform:
 
 ```sh
 yarn dist
 ```
 
-If you need to build the project without Discord RPC, use the following command and edit main entrypoint in package.json:
+Or target a specific platform:
 
 ```sh
-yarn dist-nodrpc
+yarn dist-win      # Windows portable .exe
+yarn dist-linux    # Linux AppImage
+yarn dist-mac      # macOS dmg + zip (x64 and arm64)
 ```
 
-This will create the distributable files in the `dist` directory.
+Output files are placed in the `dist/` directory.
+
+Releases are built automatically by GitHub Actions when a version tag is pushed:
+
+```sh
+git tag v1.2.7
+git push origin v1.2.7
+```
 
 ## Project Structure
 
-- `main.js`: The main entry point of the application.
-- `main-nodrpc.js`: The main entry point of the no Discord RPC version of the application.
-- `preload.js`: A script that runs before the main process, often used to set up initial configurations or preload certain resources.
-- `scripts/discordRpcUtils.js`: Utility functions for handling Discord RPC (Remote Procedure Call) integrations.
-- `scripts/promptinjection.js`: Handles prompt injection logic for the application.
-- `scripts/titlebar.js`: Manages the title bar functionality and customization.
-- `package.json`: Contains project metadata and dependencies.
-- `yarn.lock`: Dependency lock file to ensure consistent setups.
+```
+src/
+  main.js                    # App entry point
+  createApp.js               # Window, IPC, session, context menu
+  preload.js                 # contextBridge API surface for the renderer
+  scripts/
+    discordRpcUtils.js       # Discord Rich Presence logic
+    titlebar.js              # Injected custom title bar
+    promptinjection.js       # Save slot dialog (replaces window.prompt)
+    utils.js                 # URL parsing helpers
+assets/
+  logo.png / logo.ico        # App icons
+.github/workflows/
+  release.yml                # CI: build and publish releases
+```
 
 ## YNOproject
 
-Click on the heading to check out the [Yume Nikki Online Project](https://github.com/ynoproject)!  
+Check out the [Yume Nikki Online Project](https://github.com/ynoproject)!
 Make sure to check out Collective Unconscious, YNO's own multiplayer collaborative Yume Nikki Fangame!

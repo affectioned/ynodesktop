@@ -1,0 +1,84 @@
+name: Build and Release
+
+# Triggers:
+#   - Push a tag like "v1.2.7" → builds all platforms and publishes a GitHub Release
+#   - Run manually from the Actions tab → builds all platforms, uploads artifacts (no release)
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Ubuntu 22.04+ ships libfuse2t64 instead of libfuse2.
+      # electron-builder's appimagetool requires one of them to build AppImages.
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y libfuse2 || sudo apt-get install -y libfuse2t64
+
+      - name: Install dependencies
+        run: yarn install
+
+      # electron-builder auto-detects the current platform:
+      #   Windows  → portable .exe
+      #   Linux    → .AppImage
+      #   macOS    → .dmg + .zip for both x64 and arm64
+      - name: Build
+        run: yarn dist
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}
+          path: |
+            dist/*.exe
+            dist/*.AppImage
+            dist/*.dmg
+            dist/*.zip
+          if-no-files-found: warn
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    # Only run when the workflow was triggered by a version tag
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      # Tags containing a hyphen (e.g. v1.3.0-beta.1) are marked as pre-releases.
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: artifacts/**
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

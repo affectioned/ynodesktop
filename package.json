@@ -5,9 +5,10 @@
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
-    "start-nodrpc": "electron src/main-nodrpc.js",
     "dist": "electron-builder",
-    "dist-nodrpc": "electron-builder -c.appId=jvbf.ynodesktop-nodrpc -c.productName=YNOdesktop-NoDRPC"
+    "dist-win": "electron-builder --win",
+    "dist-linux": "electron-builder --linux",
+    "dist-mac": "electron-builder --mac"
   },
   "author": "jvbf, abbey, foundationkitty",
   "license": "MIT",
@@ -19,11 +20,49 @@
     "appId": "jvbf.ynodesktop",
     "productName": "YNOdesktop",
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "asar": true,
+    "compression": "maximum",
+    "electronLanguages": [
+      "en-US"
+    ],
+    "files": [
+      "**/*",
+      "!.github/**",
+      "!generateReleaseNotes.js",
+      "!eslint.config.mjs",
+      "!README.md",
+      "!LICENSE",
+      "!yarn.lock",
+      "!**/node_modules/**/{CHANGELOG.md,README.md,readme.md,readme,*.ts,*.d.ts,*.map}",
+      "!**/node_modules/**/test{,s}/**",
+      "!**/node_modules/**/__tests__/**",
+      "!**/node_modules/**/{.eslintrc,.prettierrc,.editorconfig}*"
+    ],
     "linux": {
       "target": [
         "AppImage"
       ],
       "category": "Game",
+      "icon": "assets/logo.png"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.games",
       "icon": "assets/logo.png"
     },
     "win": {
@@ -34,8 +73,9 @@
     }
   },
   "dependencies": {
-    "@xhayper/discord-rpc": "^1.2.0",
+    "discord-rpc": "^4.0.1",
     "electron-context-menu": "^3.6.1",
-    "electron-store": "^8.2.0"
+    "electron-store": "^8.2.0",
+    "sweetalert2": "^11.26.22"
   }
 }

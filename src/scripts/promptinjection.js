@@ -1,77 +1,74 @@
 // This module is a hack to make YNOonline prompts work with Electron.
-// There's probably a better way to do this.
+// SweetAlert2 is bundled locally (node_modules) instead of loaded from a CDN
+// to eliminate the runtime supply-chain risk of an unsigned external script.
+
+const fs = require('fs');
+const path = require('path');
+
+// Read the SweetAlert2 all-in-one bundle (JS + CSS) once at startup
+let swal2Source = null;
+try {
+  swal2Source = fs.readFileSync(
+    path.join(__dirname, '../../node_modules/sweetalert2/dist/sweetalert2.all.min.js'),
+    'utf8'
+  );
+} catch (err) {
+  console.error('promptinjection: could not load SweetAlert2 bundle:', err);
+}
+
+const SWAL_CONFIG = JSON.stringify({
+  title: 'Save slot?',
+  icon: 'question',
+  input: 'range',
+  inputLabel: 'Slot number',
+  inputAttributes: { min: 1, max: 15, step: 1 },
+  inputValue: 1,
+});
 
 module.exports = function (win) {
+  if (!swal2Source) return; // skip if bundle failed to load
+
+  // Inject SweetAlert2 into the renderer once per page load.
+  // The guard prevents double-injection on re-entrant calls.
+  win.webContents.executeJavaScript(
+    'if(!window.__ynodSwal2){window.__ynodSwal2=true;' + swal2Source + '}'
+  ).catch(console.error);
+
+  // Set up download/upload button overrides that use the locally-injected Swal
   win.webContents.executeJavaScript(`
-    var poll = setInterval(function() {
-      if (document.title === "Yume Nikki Online Project") {
+    (function() {
+      if (window.__ynodPromptInjected) return;
+
+      var poll = setInterval(function() {
+        if (document.title === "Yume Nikki Online Project") {
+          clearInterval(poll);
+          return;
+        }
+        var dlBtn = document.querySelector("#downloadButton");
+        if (!dlBtn?.onclick) return;
+
         clearInterval(poll);
-        return;
-      }
-      if (document.querySelector("#downloadButton")?.onclick) {
-        clearInterval(poll);
-        var originalDownloadClick = document.querySelector("#downloadButton").onclick;
-        document.querySelector("#downloadButton").onclick = function () {
-          var script = document.createElement("script");
-          script.onload = function () {
-            Swal.fire({
-              title: "Save slot?",
-              icon: "question",
-              input: "range",
-              inputLabel: "Slot number",
-              inputAttributes: {
-                min: 1,
-                max: 15,
-                step: 1,
-              },
-              inputValue: 1,
-            }).then((result) => {
-              window.prompt = function () {
-                return result.value;
-              };
-              originalDownloadClick();
-            });
-          };
-          script.src = "//cdn.jsdelivr.net/npm/sweetalert2@11";
-          script.id = "sweetalert2";
-          if (!document.querySelector("#sweetalert2")) {
-            document.head.appendChild(script);
-          } else {
-            script.onload();
-          }
+        window.__ynodPromptInjected = true;
+
+        var originalDownloadClick = dlBtn.onclick;
+        dlBtn.onclick = function() {
+          Swal.fire(${SWAL_CONFIG}).then(function(result) {
+            window.prompt = function() { return result.value; };
+            originalDownloadClick();
+          });
         };
 
-        var originalUploadClick = document.querySelector("#uploadButton").onclick;
-        document.querySelector("#uploadButton").onclick = function () {
-          var script = document.createElement("script");
-          script.onload = function () {
-            Swal.fire({
-              title: "Save slot?",
-              icon: "question",
-              input: "range",
-              inputLabel: "Slot number",
-              inputAttributes: {
-                min: 1,
-                max: 15,
-                step: 1,
-              },
-              inputValue: 1,
-            }).then((result) => {
-              window.prompt = function () {
-                return result.value;
-              };
+        var ulBtn = document.querySelector("#uploadButton");
+        if (ulBtn?.onclick) {
+          var originalUploadClick = ulBtn.onclick;
+          ulBtn.onclick = function() {
+            Swal.fire(${SWAL_CONFIG}).then(function(result) {
+              window.prompt = function() { return result.value; };
               originalUploadClick();
             });
           };
-          script.src = "//cdn.jsdelivr.net/npm/sweetalert2@11";
-          script.id = "sweetalert2";
-          if (!document.querySelector("#sweetalert2")) {
-            document.head.appendChild(script);
-          } else {
-            script.onload();
-          }
-        };
-      }
-    }, 200);
-  `);
+        }
+      }, 200);
+    })();
+  `).catch(console.error);
 };
