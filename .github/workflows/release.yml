@@ -46,7 +46,7 @@ jobs:
       #   Linux    → .AppImage
       #   macOS    → .dmg + .zip for both x64 and arm64
       - name: Build
-        run: yarn dist
+        run: yarn dist --publish never
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
