@@ -5,13 +5,6 @@ A desktop client for [Yume Nikki Online](https://ynoproject.net/) with optional 
 
 [![Build and Release](https://github.com/aguish/ynodesktop/actions/workflows/release.yml/badge.svg)](https://github.com/aguish/ynodesktop/actions/workflows/release.yml)
 
-## Features
-
-- **Discord Rich Presence** — toggle on/off with the Discord button in the title bar, no restart needed. Preference is saved between sessions.
-- **Cross-platform** — Windows, macOS (Intel & Apple Silicon), and Linux.
-- **Save slot dialog** — replaces the browser prompt with a proper slider UI when exporting/importing saves.
-- **Session persistence** — stays logged in between launches.
-
 ## Download
 
 [**→ Latest release**](https://github.com/aguish/ynodesktop/releases/latest)
@@ -107,4 +100,3 @@ assets/
 ## YNOproject
 
 Check out the [Yume Nikki Online Project](https://github.com/ynoproject)!
-Make sure to check out Collective Unconscious, YNO's own multiplayer collaborative Yume Nikki Fangame!
