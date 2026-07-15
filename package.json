@@ -14,7 +14,7 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^39.8.5",
-    "electron-builder": "^26.0.0"
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "jvbf.ynodesktop",
