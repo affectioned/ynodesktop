@@ -25,6 +25,13 @@
     "electronLanguages": [
       "en-US"
     ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "affectioned",
+        "repo": "ynodesktop"
+      }
+    ],
     "files": [
       "**/*",
       "!.github/**",

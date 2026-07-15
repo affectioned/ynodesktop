@@ -1,6 +1,7 @@
 const { app, ipcMain } = require('electron');
 const { setupContextMenu, createWindow, setupIpc, restoreSession, getMainWindow, store } = require('./createApp');
 const { connectDiscordRpc, updateRichPresence, clearPresence } = require('./scripts/discordRpcUtils');
+const { checkForUpdates } = require('./scripts/updateChecker');
 
 setupContextMenu();
 
@@ -30,7 +31,9 @@ function stopRpc() {
 app.whenReady().then(() => {
   restoreSession();
   setupIpc();
-  createWindow();
+  const win = createWindow();
+
+  checkForUpdates(win);
 
   ipcMain.handle('getDiscordRpcEnabled', () => store.get('discordRpcEnabled', true));
 
