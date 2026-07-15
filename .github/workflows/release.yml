@@ -75,7 +75,7 @@ jobs:
 
       # Tags containing a hyphen (e.g. v1.3.0-beta.1) are marked as pre-releases.
       - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
           files: artifacts/**
