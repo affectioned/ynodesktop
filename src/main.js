@@ -1,9 +1,14 @@
 const { app, ipcMain } = require('electron');
-const { setupContextMenu, createWindow, setupIpc, restoreSession, getMainWindow, store } = require('./createApp');
+const {
+  initModules,
+  setupContextMenu,
+  createWindow,
+  setupIpc,
+  restoreSession,
+  getMainWindow,
+} = require('./createApp');
 const { connectDiscordRpc, updateRichPresence, clearPresence } = require('./scripts/discordRpcUtils');
 const { checkForUpdates } = require('./scripts/updateChecker');
-
-setupContextMenu();
 
 let rpcInterval = null;
 
@@ -28,7 +33,9 @@ function stopRpc() {
   clearPresence().catch(console.error);
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  const store = await initModules();
+  setupContextMenu();
   restoreSession();
   setupIpc();
   const win = createWindow();

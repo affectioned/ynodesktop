@@ -7,14 +7,22 @@ const {
   shell,
   safeStorage,
 } = require('electron');
-const contextMenu = require('electron-context-menu');
-const Store = require('electron-store');
 const promptInjection = require('./scripts/promptinjection');
 const titlebar = require('./scripts/titlebar');
 const path = require('path');
 const { parseGameName, isDreamWorldMap } = require('./scripts/utils');
 
-const store = new Store();
+// electron-store and electron-context-menu are ESM-only from v9 / v4 respectively.
+// Loaded lazily via dynamic import inside initModules() so this CommonJS file can still require().
+let contextMenu, Store, store;
+
+async function initModules() {
+  if (store) return store;
+  contextMenu = (await import('electron-context-menu')).default;
+  Store = (await import('electron-store')).default;
+  store = new Store();
+  return store;
+}
 
 let mainWindow = null;
 
@@ -238,4 +246,12 @@ function getMainWindow() {
   return mainWindow;
 }
 
-module.exports = { setupContextMenu, createWindow, setupIpc, restoreSession, getMainWindow, store };
+module.exports = {
+  initModules,
+  setupContextMenu,
+  createWindow,
+  setupIpc,
+  restoreSession,
+  getMainWindow,
+  getStore: () => store,
+};
