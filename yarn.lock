@@ -2294,10 +2294,10 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-sweetalert2@^11.26.22:
-  version "11.26.22"
-  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.26.22.tgz"
-  integrity sha512-UtfV5j7gXBRLm0+6Vm+MqIpsMA7CF7lOGeBj1sc8YSb2Q2xKT6mkSV63b4kFUGNs4vYa+Nd7ufZ97ZX9hNfqsA==
+sweetalert2@^11.26.25:
+  version "11.26.25"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.26.25.tgz#ba24ffb79c67648ac51f834620baa15866a56e35"
+  integrity sha512-+hunCOJdJ6FLj04T9YSLvvZXRjsvIkTeTKP2e4VF8CaBias961BTnWiSFAy7F/CM5eq3QK2Rraoc5Gzftslvkg==
 
 tar@^7.4.3, tar@^7.5.6, tar@^7.5.7:
   version "7.5.11"
