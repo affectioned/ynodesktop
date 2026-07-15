@@ -84,5 +84,11 @@
     "electron-context-menu": "^4.1.2",
     "electron-store": "^11.0.2",
     "sweetalert2": "^11.26.25"
+  },
+  "resolutions": {
+    "node-abi": "^4.33.0"
+  },
+  "overrides": {
+    "node-abi": "^4.33.0"
   }
 }
