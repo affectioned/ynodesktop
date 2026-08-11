@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.1](https://github.com/affectioned/ynodesktop/compare/v1.3.0...v1.3.1) (2026-08-11)
+
+
+### Bug Fixes
+
+* **deps:** pin ws and fast-uri to clear runtime security alerts ([0560f7f](https://github.com/affectioned/ynodesktop/commit/0560f7fae00ccfe84cc0596b6b2f8038a761bb77))
+* disable Vulkan on Linux/Wayland to prevent white screen ([#39](https://github.com/affectioned/ynodesktop/issues/39)) ([207680f](https://github.com/affectioned/ynodesktop/commit/207680fefa9398b7efdcd4a3efa07bd46ef67314))
+
+
+### Dependencies
+
+* **deps-dev:** bump electron from 43.1.1 to 43.2.0 ([#40](https://github.com/affectioned/ynodesktop/issues/40)) ([9848fd3](https://github.com/affectioned/ynodesktop/commit/9848fd333cdf0a4a3320657419dcbbb6f5a20c20))
+* **deps-dev:** bump electron from 43.2.0 to 43.3.0 ([#42](https://github.com/affectioned/ynodesktop/issues/42)) ([a6c5e6b](https://github.com/affectioned/ynodesktop/commit/a6c5e6b6cef7b9ffa93327ada39dd210ffe1366f))
+* exclude README.es-ES.md from app bundle ([27a3e55](https://github.com/affectioned/ynodesktop/commit/27a3e5542121b8c8e9fdba8de60a2c98cbf928b1))
+
 ## [1.3.0](https://github.com/affectioned/ynodesktop/compare/ynodesktop-v1.2.7...ynodesktop-v1.3.0) (2026-07-15)
 
 
