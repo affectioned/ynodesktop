@@ -11,16 +11,25 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - id: release
+        uses: googleapis/release-please-action@v4
         with:
-          # Prefer a PAT so the release tag/commit this action pushes DOES trigger
-          # downstream workflows. GitHub suppresses workflow runs for events created
-          # with GITHUB_TOKEN, which otherwise leaves the release with no built
-          # binaries (release.yml never fires on the tag, requiring a manual tag
-          # re-push). Falls back to GITHUB_TOKEN when RELEASE_PAT is not set, so
-          # release-please keeps working; add a repo secret RELEASE_PAT (contents:
-          # write + pull-requests:write) to enable automatic binary builds.
-          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  # When release-please cuts a release, build the binaries and attach them.
+  # release.yml is invoked in-run as a reusable workflow (not via the tag-push
+  # event) so the default GITHUB_TOKEN works and no PAT is required: a tag
+  # pushed by GITHUB_TOKEN cannot trigger release.yml's `push: tags` event.
+  build-release:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag_name }}

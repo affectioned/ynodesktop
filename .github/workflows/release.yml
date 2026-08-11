@@ -2,12 +2,20 @@ name: Build and Release
 
 # Triggers:
 #   - Push a tag like "v1.2.7" → builds all platforms and publishes a GitHub Release
+#   - Called by release-please (workflow_call) → builds all platforms and attaches
+#     the binaries to the release release-please already created for `tag`
 #   - Run manually from the Actions tab → builds all platforms, uploads artifacts (no release)
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag of the release to attach binaries to (set by release-please)
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -63,8 +71,8 @@ jobs:
     name: Create Release
     needs: build
     runs-on: ubuntu-latest
-    # Only run when the workflow was triggered by a version tag
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Run for a manual version-tag push, or when release-please invokes us with a tag
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
 
     steps:
       - name: Download all build artifacts
@@ -73,8 +81,18 @@ jobs:
           path: artifacts
           merge-multiple: true
 
+      # Called by release-please: the release and its notes already exist,
+      # so just attach the built binaries to it.
+      - name: Attach binaries to the release
+        if: inputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ inputs.tag }}" artifacts/* --clobber --repo "${{ github.repository }}"
+
+      # Manual version-tag push: create the release and attach binaries.
       # Tags containing a hyphen (e.g. v1.3.0-beta.1) are marked as pre-releases.
       - name: Publish GitHub Release
+        if: inputs.tag == '' && startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
