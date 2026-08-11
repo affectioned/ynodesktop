@@ -86,9 +86,13 @@
     "sweetalert2": "^11.26.25"
   },
   "resolutions": {
-    "node-abi": "^4.33.0"
+    "node-abi": "^4.33.0",
+    "ws": "^7.5.11",
+    "fast-uri": "^3.1.5"
   },
   "overrides": {
-    "node-abi": "^4.33.0"
+    "node-abi": "^4.33.0",
+    "ws": "^7.5.11",
+    "fast-uri": "^3.1.5"
   }
 }
