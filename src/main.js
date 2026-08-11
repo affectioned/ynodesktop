@@ -10,6 +10,17 @@ const {
 const { connectDiscordRpc, updateRichPresence, clearPresence } = require('./scripts/discordRpcUtils');
 const { checkForUpdates } = require('./scripts/updateChecker');
 
+// Linux/Wayland fix: Electron 43 (Chromium) defaults to a Vulkan graphics
+// backend that is incompatible with the Wayland ozone platform. The GPU process
+// fails to initialize, which cascades into the network service crashing and a
+// permanent white screen. Let Ozone auto-pick the platform for the current
+// session and disable the Vulkan backend so GL rendering is used instead.
+// Must run before app is ready. Sandbox stays enabled — no --no-sandbox needed.
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+  app.commandLine.appendSwitch('disable-features', 'Vulkan');
+}
+
 let rpcInterval = null;
 
 function startRpc() {
