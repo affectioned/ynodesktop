@@ -3,11 +3,11 @@
 
 A desktop client for [Yume Nikki Online](https://ynoproject.net/) with optional Discord Rich Presence. Show your friends what game you're playing and what room you're in.
 
-[![Build and Release](https://github.com/aguish/ynodesktop/actions/workflows/release.yml/badge.svg)](https://github.com/aguish/ynodesktop/actions/workflows/release.yml)
+[![Build and Release](https://github.com/affectioned/ynodesktop/actions/workflows/release.yml/badge.svg)](https://github.com/affectioned/ynodesktop/actions/workflows/release.yml)
 
 ## Download
 
-[**→ Latest release**](https://github.com/aguish/ynodesktop/releases/latest)
+[**→ Latest release**](https://github.com/affectioned/ynodesktop/releases/latest)
 
 | Platform | File |
 |----------|------|
@@ -48,7 +48,7 @@ Click the Discord icon in the title bar to toggle Rich Presence on or off at any
 Requires [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/).
 
 ```sh
-git clone https://github.com/aguish/ynodesktop.git
+git clone https://github.com/affectioned/ynodesktop.git
 cd ynodesktop
 yarn install
 yarn start
