@@ -38,6 +38,7 @@
       "!generateReleaseNotes.js",
       "!eslint.config.mjs",
       "!README.md",
+      "!README.es-ES.md",
       "!LICENSE",
       "!yarn.lock",
       "!**/node_modules/**/{CHANGELOG.md,README.md,readme.md,readme,*.ts,*.d.ts,*.map}",
