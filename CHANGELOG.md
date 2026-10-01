@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/affectioned/ynodesktop/compare/v1.3.2...v1.3.3) (2026-10-01)
+
+
+### Bug Fixes
+
+* **build:** use gzip for AppImage and drop 'linux' from its filename ([4dff07a](https://github.com/affectioned/ynodesktop/commit/4dff07a18ee52df9ad29f8c24a618c4e2e41bb38))
+
 ## [1.3.2](https://github.com/affectioned/ynodesktop/compare/v1.3.1...v1.3.2) (2026-08-27)
 
 
