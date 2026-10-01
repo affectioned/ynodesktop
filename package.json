@@ -50,8 +50,12 @@
       "target": [
         "AppImage"
       ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
       "category": "Game",
       "icon": "assets/logo.png"
+    },
+    "appImage": {
+      "compression": "gzip"
     },
     "mac": {
       "target": [
