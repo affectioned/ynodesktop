@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Must match the main window title: createApp.js skips its #content tweak
+         for this page only when the title is unchanged. -->
+    <title>Yume Nikki Online Project</title>
+    <style>
+      html {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: #0f0a12;
+        font-family: 'Segoe UI', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+      }
+      /* The injected titlebar is the first child; this fills what is left. */
+      main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      /* Dark text on a light panel: legible, and it keeps the window from
+         reading as one flat colour. */
+      .card {
+        max-width: 34em;
+        padding: 40px 48px;
+        border-radius: 10px;
+        background: #f4f1f5;
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 18px;
+        font-size: 32px;
+        font-weight: 600;
+        color: #241a28;
+      }
+      p {
+        margin: 0 0 28px;
+        font-size: 19px;
+        line-height: 1.5;
+        color: #3d3344;
+      }
+      button {
+        padding: 11px 30px;
+        font-size: 17px;
+        font-family: inherit;
+        color: #241a28;
+        background: rgba(194, 146, 200, 1);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: rgba(176, 128, 182, 1);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="card">
+        <h1>No connection</h1>
+        <p>
+          YNOdesktop needs an internet connection to reach ynoproject.net.
+          Check your network, then try again.
+        </p>
+        <button onclick="location.href = 'https://ynoproject.net/'">
+          Try again
+        </button>
+      </div>
+    </main>
+  </body>
+</html>

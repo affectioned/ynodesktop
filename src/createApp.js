@@ -169,6 +169,15 @@ function createWindow() {
     `);
   });
 
+  // Show a local page instead of Chromium's blank error page when ynoproject.net
+  // cannot be reached.
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+    if (!isMainFrame) return;
+    if (errorCode === -3) return; // ERR_ABORTED — ordinary navigations report this
+    if (validatedURL.startsWith('file://')) return; // the offline page itself; never loop
+    mainWindow.loadFile(path.join(__dirname, 'offline.html'));
+  });
+
   mainWindow.webContents.on('devtools-opened', () => {
     mainWindow.webContents.send('log-app-version', app.getVersion());
   });
