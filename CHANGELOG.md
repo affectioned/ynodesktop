@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/affectioned/ynodesktop/compare/v1.3.3...v1.3.4) (2026-10-01)
+
+
+### Bug Fixes
+
+* show an offline page when ynoproject.net cannot be reached ([38f5284](https://github.com/affectioned/ynodesktop/commit/38f528429dd6805fa5d01ae0ee2bff455eda9f34))
+
 ## [1.3.3](https://github.com/affectioned/ynodesktop/compare/v1.3.2...v1.3.3) (2026-10-01)
 
 
